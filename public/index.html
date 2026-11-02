@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BentaHub Marketplace | SIA</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .loader { border-top-color: #3498db; -webkit-animation: spinner 1.5s linear infinite; animation: spinner 1.5s linear infinite; }
+    @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+  <nav class="bg-blue-600 text-white p-4 shadow-md">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-2xl font-bold tracking-wider">BentaHub Admin</h1>
+      <span class="text-sm bg-blue-800 px-3 py-1 rounded-full">SIA Final Defense</span>
+    </div>
+  </nav>
+
+  <div class="container mx-auto mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 px-4">
+    <!-- Control Panel -->
+    <div class="col-span-1 md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+      
+      <!-- Ijan -->
+      <div class="bg-white p-5 rounded-lg shadow border-t-4 border-blue-500">
+        <h3 class="font-bold text-lg mb-2">Member A: Ijan (Auth)</h3>
+        <button onclick="fetchData('/api/auth/users', 'GET')" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded transition">Fetch Users (INNER JOIN)</button>
+      </div>
+
+      <!-- Ib-Ib -->
+      <div class="bg-white p-5 rounded-lg shadow border-t-4 border-green-500">
+        <h3 class="font-bold text-lg mb-2">Member B: Ib-Ib (Zones)</h3>
+        <button onclick="fetchData('/api/zones', 'GET')" class="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 rounded transition">Load Safe Zones (LEFT JOIN)</button>
+      </div>
+
+      <!-- Dinglasan -->
+      <div class="bg-white p-5 rounded-lg shadow border-t-4 border-purple-500">
+        <h3 class="font-bold text-lg mb-2">Member C: Dinglasan (Listings)</h3>
+        <button onclick="fetchData('/api/listings', 'GET')" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 rounded transition">View Listings (RIGHT JOIN)</button>
+      </div>
+
+      <!-- Espiritu -->
+      <div class="bg-white p-5 rounded-lg shadow border-t-4 border-yellow-500">
+        <h3 class="font-bold text-lg mb-2">Member D: Espiritu (Meetups)</h3>
+        <button onclick="fetchData('/api/meetups', 'GET')" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 rounded transition">Scheduled Meetups (INNER JOIN)</button>
+      </div>
+
+      <!-- Cabugnason -->
+      <div class="bg-white p-5 rounded-lg shadow border-t-4 border-red-500">
+        <h3 class="font-bold text-lg mb-2">Member E: Cabugnason (Audit)</h3>
+        <button onclick="fetchData('/api/chats/audit', 'GET')" class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-2 rounded transition">System Audit Log (FULL JOIN)</button>
+      </div>
+
+      <!-- Gemina -->
+      <div class="bg-white p-5 rounded-lg shadow border-t-4 border-indigo-500">
+        <h3 class="font-bold text-lg mb-2">Member F: Gemina (Reviews)</h3>
+        <button onclick="fetchData('/api/reviews/leaderboard', 'GET')" class="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 rounded transition">Trust Leaderboard (LEFT JOIN)</button>
+      </div>
+    </div>
+
+    <!-- JSON Response Viewer -->
+    <div class="col-span-1 bg-gray-900 rounded-lg shadow-lg p-5 flex flex-col h-[500px]">
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="text-white font-mono text-sm">Server Response</h3>
+        <div id="loadingIndicator" class="hidden w-5 h-5 border-2 border-gray-600 rounded-full loader"></div>
+      </div>
+      <pre id="jsonOutput" class="text-green-400 font-mono text-xs overflow-y-auto flex-1 p-2 bg-black rounded">Awaiting system request...</pre>
+    </div>
+  </div>
+
+  <script>
+    async function fetchData(endpoint, method) {
+      const output = document.getElementById('jsonOutput');
+      const loader = document.getElementById('loadingIndicator');
+      
+      output.innerText = '';
+      loader.classList.remove('hidden');
+
+      try {
+        const response = await fetch(`http://localhost:1234${endpoint}`, { method });
+        const data = await response.json();
+        
+        loader.classList.add('hidden');
+        if(!response.ok) {
+            output.innerHTML = `<span class="text-red-500">Error ${response.status}: ${JSON.stringify(data, null, 2)}</span>`;
+        } else {
+            output.innerText = JSON.stringify(data, null, 2);
+        }
+      } catch (error) {
+        loader.classList.add('hidden');
+        output.innerHTML = `<span class="text-red-500">Network Error: Is the Express server running?</span>`;
+      }
+    }
+  </script>
+</body>
+</html>
