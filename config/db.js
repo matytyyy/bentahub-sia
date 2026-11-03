@@ -8,6 +8,8 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME || 'bentahub_db',
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
+  dateStrings: true // return DATETIME as plain strings (no timezone shifting)
 });
+
 module.exports = pool;

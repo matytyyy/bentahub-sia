@@ -1,21 +1,45 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
+const AppError = require('./utils/AppError');
 const errorHandler = require('./middleware/errorHandler');
-require('dotenv').config();
 
 const app = express();
 app.use(cors());
-app.use(express.json());
-app.use(express.static('public')); // Serves the beautiful frontend
+app.use(express.json({ limit: '100kb' }));
+app.use(express.static(path.join(__dirname, 'public')));
 
-// API Routes (Members will add their files here later)
-app.use('/api/auth', require('./routes/authRoutes'));       // Ijan
-app.use('/api/zones', require('./routes/zoneRoutes'));       // Ib-Ib
-app.use('/api/listings', require('./routes/listingRoutes')); // Dinglasan
-app.use('/api/meetups', require('./routes/meetupRoutes'));   // Espiritu
-app.use('/api/chats', require('./routes/chatRoutes'));       // Cabugnason
-app.use('/api/reviews', require('./routes/reviewRoutes'));   // Gemina
+// Each member's route file is mounted only if it exists, so the server still starts
+// while teammates' branches are being merged one by one.
+const mounts = {
+  auth: '/api/auth',       // Ijan
+  zone: '/api/zones',      // Ib-Ib
+  listing: '/api/listings',// Dinglasan
+  meetup: '/api/meetups',  // Espiritu
+  chat: '/api/chats',      // Cabugnason
+  review: '/api/reviews'   // Gemina
+};
+for (const [name, base] of Object.entries(mounts)) {
+  const file = path.join(__dirname, 'routes', `${name}Routes.js`);
+  if (fs.existsSync(file)) app.use(base, require(file));
+}
 
+app.use('/api', (req, res, next) => next(new AppError(`Route not found: ${req.method} ${req.originalUrl}`, 404)));
 app.use(errorHandler);
 
-app.listen(1234, () => console.log('SIA Server running on http://localhost:1234'));
+const PORT = process.env.PORT || 1234;
+if (require.main === module) {
+  app.listen(PORT, () => console.log(`BentaHub SIA running on http://localhost:${PORT}`));
+
+  // Unique feature, automatic part: every minute, expire meetups nobody confirmed/completed.
+  const workflowFile = path.join(__dirname, 'models', 'workflowModel.js');
+  if (fs.existsSync(workflowFile)) {
+    const workflow = require(workflowFile);
+    setInterval(() => {
+      workflow.expireStaleMeetups().catch((e) => console.error('Workflow error:', e.message));
+    }, 60 * 1000);
+  }
+}
+module.exports = app;
