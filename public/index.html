@@ -1,181 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BentaHub API Console</title>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#eef4f4;--panel:#fff;--ink:#12303a;--mute:#5d7580;--line:#d3e1e3;--teal:#0f766e;--teal-s:#d5efec;--gold:#f2b632;--bad:#c2410c;--code:#12303a;--codeink:#bfeee8}
-:root[data-theme=dark]{--bg:#0c1d22;--panel:#13292f;--ink:#e6f3f3;--mute:#8fb0b6;--line:#244249;--teal:#3dd1c0;--teal-s:#16393c;--gold:#f2b632;--bad:#ff9a6b;--code:#081418;--codeink:#bfeee8}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 'DM Sans',system-ui,sans-serif}
-h1,h2{font-family:'Bricolage Grotesque','DM Sans',sans-serif;margin:0}
-button{font:inherit;color:inherit;cursor:pointer}
-:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 28px;border-bottom:1px solid var(--line);background:var(--panel);flex-wrap:wrap}
-.brand{display:flex;align-items:center;gap:12px}
-.logo{width:40px;height:40px;border-radius:12px 12px 12px 4px;background:var(--teal);display:grid;place-items:center;color:#fff;font:800 20px 'Bricolage Grotesque'}
-header h1{font-size:24px;font-weight:800}
-header p{margin:0;color:var(--mute);font-size:13px}
-.tools{display:flex;gap:8px}
-.btn{border:1px solid var(--line);background:var(--panel);padding:8px 14px;border-radius:10px;font-weight:500;transition:.15s}
-.btn:hover{border-color:var(--teal)}
-.btn.primary{background:var(--teal);border-color:var(--teal);color:#fff}
-:root[data-theme=dark] .btn.primary{color:#062a27}
-main{display:grid;grid-template-columns:300px 1fr;gap:24px;padding:24px 28px;max-width:1300px;margin:auto}
-@media(max-width:820px){main{grid-template-columns:1fr;padding:16px}}
-nav{display:flex;flex-direction:column;gap:8px}
-.mem{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;text-align:left;padding:12px;border:1px solid var(--line);background:var(--panel);border-radius:14px;transition:.15s}
-.mem:hover{transform:translateX(3px)}
-.mem[aria-current=true]{border-color:var(--teal);box-shadow:inset 4px 0 0 var(--teal)}
-.av{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font:800 16px 'Bricolage Grotesque';background:var(--teal-s);color:var(--teal)}
-.mem b{display:block;font-size:15px}.mem small{color:var(--mute)}
-.dot{width:10px;height:10px;border-radius:50%;background:var(--line)}
-.dot.ok{background:#22a06b}.dot.err{background:var(--bad)}.dot.load{background:var(--gold);animation:p 1s infinite}
-@keyframes p{50%{opacity:.3}}
-section.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;min-width:0}
-.top{padding:22px 24px;border-bottom:1px solid var(--line)}
-.top h2{font-size:26px}
-.chips{display:flex;gap:8px;margin:10px 0 0;flex-wrap:wrap}
-.chip{padding:3px 10px;border-radius:99px;background:var(--teal-s);color:var(--teal);font-size:13px;font-weight:700}
-.chip.gold{background:#fbe9bd;color:#7a5600}
-pre.sql{margin:16px 0 0;padding:14px 16px;border-radius:12px;background:var(--code);color:var(--codeink);font:13px/1.55 ui-monospace,Consolas,monospace;overflow:auto;white-space:pre-wrap}
-.bar{display:flex;gap:10px;align-items:center;padding:14px 24px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
-.bar input{flex:1;min-width:160px;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
-.seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
-.seg button{border:0;background:none;padding:8px 14px}
-.seg button[aria-pressed=true]{background:var(--teal);color:#fff}
-:root[data-theme=dark] .seg button[aria-pressed=true]{color:#062a27}
-.meta{color:var(--mute);font-size:13px;padding:10px 24px 0}
-.view{padding:12px 24px 24px;overflow:auto;max-height:480px}
-table{border-collapse:collapse;width:100%}
-th{position:sticky;top:0;background:var(--panel);text-align:left;padding:10px 12px;border-bottom:2px solid var(--line);cursor:pointer;white-space:nowrap;user-select:none}
-th:hover{color:var(--teal)}
-td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
-tbody tr:hover{background:var(--teal-s)}
-.null{color:var(--mute);font-style:italic}
-.empty{padding:40px 10px;text-align:center;color:var(--mute)}
-.err{color:var(--bad);font-weight:500}
-pre.json{margin:0;font:13px/1.5 ui-monospace,Consolas,monospace;white-space:pre-wrap}
-.skel{height:14px;margin:14px 0;border-radius:6px;background:linear-gradient(90deg,var(--line),var(--teal-s),var(--line));background-size:200%;animation:s 1.2s infinite}
-@keyframes s{to{background-position:-200%}}
-@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BentaHub | Safe-Meetup Marketplace Console</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .spin { animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce) { .spin { animation: none; } }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid #0f766e; outline-offset: 2px; }
+  </style>
 </head>
-<body>
-<header>
-  <div class="brand"><div class="logo">B</div><div><h1>BentaHub API Console</h1><p>SIA final defense &middot; Express + MySQL</p></div></div>
-  <div class="tools">
-    <button class="btn primary" id="runAll">Test all endpoints</button>
-    <button class="btn" id="theme">Dark mode</button>
-  </div>
-</header>
-<main>
-  <nav id="nav" aria-label="Members"></nav>
-  <section class="panel" id="panel"></section>
-</main>
+<body class="bg-stone-50 text-stone-800 font-sans">
+  <header class="bg-teal-800 text-white">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center gap-3">
+      <h1 class="text-xl font-bold mr-auto">BentaHub <span class="font-normal text-teal-200 text-sm">safe-meetup marketplace console</span></h1>
+      <div id="loader" class="hidden w-5 h-5 border-2 border-teal-300 border-t-white rounded-full spin" role="status" aria-label="Loading"></div>
+      <form id="loginForm" class="flex flex-wrap items-center gap-2 text-sm">
+        <input id="loginUser" placeholder="username" autocomplete="username" class="px-2 py-1 rounded text-stone-900 w-28">
+        <input id="loginPass" type="password" placeholder="password" autocomplete="current-password" class="px-2 py-1 rounded text-stone-900 w-28">
+        <button class="bg-white text-teal-900 font-semibold px-3 py-1 rounded hover:bg-teal-50">Log in</button>
+      </form>
+      <div id="whoami" class="hidden text-sm flex items-center gap-2">
+        <span id="whoText"></span>
+        <button id="logoutBtn" class="underline">Log out</button>
+      </div>
+    </div>
+    <nav id="tabs" class="max-w-7xl mx-auto px-4 flex flex-wrap gap-1 text-sm" aria-label="Screens"></nav>
+  </header>
 
-<script>
-/* Members follow the master guide. Edit names or slices here if they change. */
-const MEMBERS = [
-  {name:'Ijan', slice:'Users and roles', join:'INNER JOIN', path:'/api/auth/users',
-   sql:"SELECT u.id, u.full_name, u.email, r.role_name\nFROM users u\nINNER JOIN user_roles ur ON u.id = ur.user_id\nINNER JOIN roles r ON ur.role_id = r.id"},
-  {name:'Ib-Ib', slice:'Safe zones', join:'LEFT JOIN', path:'/api/zones',
-   sql:"SELECT z.zone_name, z.city, COUNT(ms.id) AS scheduled_meetups\nFROM safe_meetup_zones z\nLEFT JOIN meetup_schedules ms ON z.id = ms.zone_id\nGROUP BY z.id"},
-  {name:'Dinglasan', slice:'Listings', join:'RIGHT JOIN', path:'/api/listings',
-   sql:"SELECT c.category_name, l.title, l.price, l.status\nFROM categories c\nRIGHT JOIN listings l ON c.id = l.category_id\nWHERE l.status = 'active'"},
-  {name:'Espiritu', slice:'Meetups', join:'INNER JOIN', path:'/api/meetups',
-   sql:"SELECT ms.scheduled_time, z.zone_name, ms.status\nFROM meetup_schedules ms\nINNER JOIN safe_meetup_zones z ON ms.zone_id = z.id"},
-  {name:'Cabugnason', slice:'Chat and audit', join:'FULL JOIN (UNION)', path:'/api/chats/audit',
-   sql:"SELECT u.full_name, al.action AS activity, al.created_at\nFROM users u LEFT JOIN audit_logs al ON u.id = al.user_id\nUNION\nSELECT u.full_name, 'Sent Message', cm.sent_at\nFROM users u RIGHT JOIN chat_messages cm ON u.id = cm.sender_id"},
-  {name:'Gemina', slice:'Reviews and trust', join:'LEFT JOIN', path:'/api/reviews/leaderboard',
-   sql:"SELECT u.full_name, sts.rating_score, sts.trust_tier\nFROM users u\nLEFT JOIN seller_trust_scores sts ON u.id = sts.seller_id\nWHERE sts.rating_score IS NOT NULL\nORDER BY sts.rating_score DESC"}
-];
+  <main class="max-w-7xl mx-auto px-4 py-5 grid grid-cols-1 lg:grid-cols-3 gap-5">
+    <section class="lg:col-span-2 space-y-4">
+      <div>
+        <h2 id="screenTitle" class="text-lg font-bold"></h2>
+        <p id="screenHint" class="text-sm text-stone-600"></p>
+      </div>
+      <div id="errorBox" class="hidden bg-red-50 border border-red-300 text-red-800 rounded px-3 py-2 text-sm" role="alert"></div>
+      <div id="toolbar" class="flex flex-wrap gap-2"></div>
+      <form id="form" class="hidden bg-white border border-stone-200 rounded p-4 grid grid-cols-1 sm:grid-cols-2 gap-3"></form>
+      <div>
+        <h3 id="tableTitle" class="text-sm font-semibold text-stone-600 mb-1"></h3>
+        <div class="bg-white border border-stone-200 rounded overflow-x-auto"><table id="table" class="min-w-full text-sm"></table></div>
+      </div>
+    </section>
 
-const $ = s => document.querySelector(s);
-const state = {cur:0, res:{}, view:'table', q:'', sort:null, dir:1};
-const esc = v => String(v).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const initials = n => n.replace(/[^A-Za-z0-9]/g,' ').trim().split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    <aside class="lg:sticky lg:top-4 self-start bg-stone-900 rounded p-4 text-stone-100">
+      <h2 class="text-sm font-semibold mb-1">Last API call</h2>
+      <p id="logLine" class="text-xs text-stone-400 mb-2">Nothing sent yet. Log in, then use a screen.</p>
+      <pre id="logBody" class="text-xs text-teal-300 overflow-auto max-h-[28rem] whitespace-pre-wrap"></pre>
+    </aside>
+  </main>
 
-function fmt(v){
-  if (v === null || v === undefined) return '<span class="null">none</span>';
-  if (typeof v === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(v)) return esc(new Date(v).toLocaleString());
-  return esc(v);
-}
+  <div id="toast" class="hidden fixed bottom-4 left-4 px-4 py-2 rounded shadow text-white" role="status"></div>
 
-function drawNav(){
-  $('#nav').innerHTML = MEMBERS.map((m,i)=>{
-    const r = state.res[i], cls = !r ? '' : r.loading ? 'load' : r.error ? 'err' : 'ok';
-    return `<button class="mem" data-i="${i}" aria-current="${i===state.cur}">
-      <span class="av">${esc(initials(m.name))}</span>
-      <span><b>${esc(m.name)}</b><small>${esc(m.slice)}</small></span>
-      <span class="dot ${cls}" title="${cls||'not tested'}"></span></button>`;
-  }).join('');
-}
-
-function drawPanel(){
-  const m = MEMBERS[state.cur], r = state.res[state.cur];
-  let body;
-  if (!r) body = `<div class="empty">Press <b>Run request</b> to call <code>${m.path}</code>.</div>`;
-  else if (r.loading) body = '<div class="view"><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>';
-  else if (r.error) body = `<div class="view"><p class="err">${esc(r.error)}</p><p>${esc(r.hint||'')}</p></div>`;
-  else body = resultView(r);
-  $('#panel').innerHTML = `
-    <div class="top"><h2>${esc(m.name)}: ${esc(m.slice)}</h2>
-      <div class="chips"><span class="chip">${esc(m.join)}</span><span class="chip gold">GET ${esc(m.path)}</span></div>
-      <pre class="sql">${esc(m.sql)}</pre></div>
-    <div class="bar">
-      <button class="btn primary" id="run">Run request</button>
-      <input id="q" placeholder="Filter rows" value="${esc(state.q)}" aria-label="Filter rows">
-      <div class="seg"><button data-v="table" aria-pressed="${state.view==='table'}">Table</button><button data-v="json" aria-pressed="${state.view==='json'}">JSON</button></div>
-      <button class="btn" id="copy">Copy JSON</button></div>
-    ${body}`;
-  const q = $('#q'); q.addEventListener('input', e => { state.q = e.target.value; const p=e.target.selectionStart; drawPanel(); const n=$('#q'); n.focus(); n.setSelectionRange(p,p); });
-}
-
-function resultView(r){
-  const rows = r.data.filter(o => !state.q || JSON.stringify(Object.values(o)).toLowerCase().includes(state.q.toLowerCase()));
-  const meta = `<div class="meta">${rows.length} of ${r.data.length} rows &middot; ${r.ms} ms</div>`;
-  if (state.view === 'json') return meta + `<div class="view"><pre class="json">${esc(JSON.stringify(r.raw,null,2))}</pre></div>`;
-  if (!r.data.length) return meta + '<div class="empty">The query worked but returned no rows. Check that the seed file was imported.</div>';
-  const cols = Object.keys(r.data[0]);
-  if (state.sort) rows.sort((a,b)=> (a[state.sort]>b[state.sort]?1:a[state.sort]<b[state.sort]?-1:0)*state.dir);
-  return meta + `<div class="view"><table><thead><tr>${cols.map(c=>`<th data-c="${c}">${esc(c)}${state.sort===c?(state.dir>0?' ▲':' ▼'):''}</th>`).join('')}</tr></thead>
-    <tbody>${rows.map(o=>`<tr>${cols.map(c=>`<td>${fmt(o[c])}</td>`).join('')}</tr>`).join('')||`<tr><td colspan="${cols.length}" class="empty">No rows match your filter.</td></tr>`}</tbody></table></div>`;
-}
-
-async function load(i){
-  state.res[i] = {loading:true}; if (i===state.cur) drawPanel(); drawNav();
-  const t = performance.now();
-  try {
-    const resp = await fetch(MEMBERS[i].path);
-    const raw = await resp.json();
-    if (!resp.ok || !raw.success) throw Object.assign(new Error(raw.error || 'Request failed'), {status:resp.status});
-    state.res[i] = {data:raw.data, raw, ms:Math.round(performance.now()-t)};
-  } catch (e) {
-    const net = e instanceof TypeError;
-    state.res[i] = {error: net ? 'Cannot reach the server.' : e.message,
-      hint: net ? 'Start it with node server.js and open this page from http://localhost:1234.'
-        : /Unknown column|doesn't exist/.test(e.message) ? 'A table or column name in the controller does not match your database.'
-        : /ECONNREFUSED/.test(e.message) ? 'Start MySQL in XAMPP.' : ''};
-  }
-  drawNav(); if (i===state.cur) drawPanel();
-}
-
-document.addEventListener('click', e => {
-  const t = e.target.closest('button'); if (!t) return;
-  if (t.classList.contains('mem')) { state.cur=+t.dataset.i; state.q=''; state.sort=null; drawNav(); drawPanel(); if(!state.res[state.cur]) load(state.cur); }
-  else if (t.id==='run') load(state.cur);
-  else if (t.dataset.v) { state.view=t.dataset.v; drawPanel(); }
-  else if (t.id==='copy') { const r=state.res[state.cur]; if(r&&r.raw){ navigator.clipboard.writeText(JSON.stringify(r.raw,null,2)); t.textContent='Copied'; setTimeout(()=>t.textContent='Copy JSON',1200);} }
-  else if (t.id==='runAll') { t.disabled=true; Promise.all(MEMBERS.map((_,i)=>load(i))).then(()=>{t.disabled=false; const ok=Object.values(state.res).filter(r=>r.data).length; t.textContent=`${ok} of ${MEMBERS.length} passed`; setTimeout(()=>t.textContent='Test all endpoints',2500);}); }
-  else if (t.id==='theme') { const d=document.documentElement; const dark=d.dataset.theme==='dark'; d.dataset.theme=dark?'light':'dark'; t.textContent=dark?'Dark mode':'Light mode'; }
-  else if (t.tagName==='TH' ) {}
-});
-document.addEventListener('click', e => { const th=e.target.closest('th'); if(!th) return; const c=th.dataset.c; state.dir = state.sort===c ? -state.dir : 1; state.sort=c; drawPanel(); });
-
-drawNav(); drawPanel(); load(0);
-</script>
+  <script src="js/core.js"></script>
+  <script src="js/screens/auth.js"></script>
+  <script src="js/screens/zones.js"></script>
+  <script src="js/screens/listings.js"></script>
+  <script src="js/screens/meetups.js"></script>
+  <script src="js/screens/chats.js"></script>
+  <script src="js/screens/reviews.js"></script>
+  <script>Screens.start();</script>
 </body>
 </html>
