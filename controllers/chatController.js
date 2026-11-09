@@ -1,4 +1,3 @@
-// Cabugnason: Controller for chat, audit report, notifications, and the workflow trigger.
 const Chat = require('../models/chatModel');
 const Audit = require('../models/auditModel');
 const Notify = require('../models/notificationModel');
@@ -49,7 +48,6 @@ exports.deleteMessage = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, message: `Message ${id} deleted` });
 });
 
-// FULL OUTER JOIN report
 exports.getAudit = asyncHandler(async (req, res) => {
   const rows = await Audit.fullOuterReport();
   res.status(200).json({ success: true, count: rows.length, data: rows });
@@ -66,7 +64,6 @@ exports.readNotification = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, message: 'Marked as read' });
 });
 
-// Manual trigger of the same job the server runs every minute (handy for the live demo).
 exports.runWorkflow = asyncHandler(async (req, res) => {
   const result = await Workflow.expireStaleMeetups();
   res.status(200).json({ success: true, data: result });
