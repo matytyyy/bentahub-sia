@@ -1,4 +1,3 @@
-// Cabugnason: Model for chat messages.
 const db = require('../config/db');
 
 exports.listForUser = async (userId) => {
